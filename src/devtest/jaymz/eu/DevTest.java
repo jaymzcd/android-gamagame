@@ -1,16 +1,24 @@
 package devtest.jaymz.eu;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.MotionEvent;
 import android.view.Window;
+
+import devtest.jaymz.eu.Sprite;
 
 public class DevTest extends Activity
 {
@@ -55,13 +63,17 @@ public class DevTest extends Activity
             }
 
         }
+
+        public SurfaceHolder getSurfaceHolder() {
+            return _surfaceHolder;
+        }
+
     }
 
     class Panel extends SurfaceView implements SurfaceHolder.Callback {
 
         private TutorialThread _thread;
-        private int _x = 20;
-        private int _y = 20;
+        private ArrayList<Sprite> _sprites = new ArrayList<Sprite>();
     
         public Panel(Context context) {
             super(context);
@@ -72,9 +84,14 @@ public class DevTest extends Activity
 
         @Override
         public void onDraw(Canvas canvas) {
-            Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.invader);
             canvas.drawColor(Color.BLACK);
-            canvas.drawBitmap(_scratch, _x, _y, null);
+            for(Sprite sprite : _sprites) {
+                sprite.Update();
+                Paint p = new Paint(Color.RED);
+                ColorFilter f = new LightingColorFilter(Color.RED, 1);
+                p.setColorFilter(f);
+                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), p);
+            }
         }
 
         @Override
@@ -104,9 +121,15 @@ public class DevTest extends Activity
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            _x = (int) event.getX();
-            _y = (int) event.getY();
-            return true;
+            synchronized (_thread.getSurfaceHolder()) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    Sprite sprite = new Sprite(BitmapFactory.decodeResource(getResources(), R.drawable.invader));
+                    sprite.getCoordinates().setX((int) event.getX() - sprite.getGraphic().getWidth() / 2);
+                    sprite.getCoordinates().setY((int) event.getY() - sprite.getGraphic().getHeight() / 2);
+                    _sprites.add(sprite);
+                }
+                return true;
+            }
         }
 
     }
