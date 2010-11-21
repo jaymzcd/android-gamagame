@@ -60,18 +60,21 @@ public class DevTest extends Activity
     class Panel extends SurfaceView implements SurfaceHolder.Callback {
 
         private TutorialThread _thread;
-         
+        private int _x = 20;
+        private int _y = 20;
+    
         public Panel(Context context) {
             super(context);
             getHolder().addCallback(this);
             _thread = new TutorialThread(getHolder(), this);
+            setFocusable(true);
         }
 
         @Override
         public void onDraw(Canvas canvas) {
             Bitmap _scratch = BitmapFactory.decodeResource(getResources(), R.drawable.invader);
             canvas.drawColor(Color.BLACK);
-            canvas.drawBitmap(_scratch, 10, 10, null);
+            canvas.drawBitmap(_scratch, _x, _y, null);
         }
 
         @Override
@@ -97,6 +100,13 @@ public class DevTest extends Activity
                     // we will try it again and again...
                 }
             }
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            _x = (int) event.getX();
+            _y = (int) event.getY();
+            return true;
         }
 
     }
