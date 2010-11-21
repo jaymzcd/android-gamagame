@@ -1,6 +1,7 @@
 package devtest.jaymz.eu;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.app.Activity;
 import android.content.Context;
@@ -74,7 +75,8 @@ public class DevTest extends Activity
 
         private TutorialThread _thread;
         private ArrayList<Sprite> _sprites = new ArrayList<Sprite>();
-    
+        private Random _r = new Random();
+        
         public Panel(Context context) {
             super(context);
             getHolder().addCallback(this);
@@ -87,8 +89,8 @@ public class DevTest extends Activity
             canvas.drawColor(Color.BLACK);
             for(Sprite sprite : _sprites) {
                 sprite.Update();
-                Paint p = new Paint(Color.RED);
-                ColorFilter f = new LightingColorFilter(Color.RED, 1);
+                Paint p = new Paint();
+                ColorFilter f = new LightingColorFilter(Color.rgb(_r.nextInt(255), _r.nextInt(255), _r.nextInt(255)), 1);
                 p.setColorFilter(f);
                 canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), p);
             }
