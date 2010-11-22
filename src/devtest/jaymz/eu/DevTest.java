@@ -2,6 +2,7 @@ package devtest.jaymz.eu;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.lang.System;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 import android.view.SurfaceView;
@@ -37,10 +40,13 @@ public class DevTest extends Activity
         private SurfaceHolder _surfaceHolder;
         private Panel _panel;
         private boolean _run = false;
+        private long gameTimer;
+        private long startTime;
 
         public TutorialThread(SurfaceHolder surfaceHolder, Panel panel) {
             _surfaceHolder = surfaceHolder;
             _panel = panel;
+            startTime = System.currentTimeMillis();
         }
 
         public void setRunning(boolean run) {
@@ -52,10 +58,11 @@ public class DevTest extends Activity
             Canvas c;
             while (_run) {
                 c = null;
+                gameTimer = System.currentTimeMillis() - startTime;
                 try {
                     c = _surfaceHolder.lockCanvas(null);
                     synchronized (_surfaceHolder) {
-                        _panel.onDraw(c);
+                        _panel.onDraw(c, gameTimer);
                     }
                 } finally {
                     if (c != null) {
@@ -82,6 +89,9 @@ public class DevTest extends Activity
         private Bitmap background;
         private Bitmap player;
         private float posX, posY;
+        private int score = 0;
+        private Typeface zombieFace;
+        private Paint paint;
         
         public Panel(Context context) {
             super(context);
@@ -94,18 +104,34 @@ public class DevTest extends Activity
 
             background = BitmapFactory.decodeResource(getResources(), R.drawable.base);
             player = BitmapFactory.decodeResource(getResources(), R.drawable.guitar);
+            zombieFace = Typeface.createFromAsset(getContext().getAssets(), "ZOMBIE.TTF");
+
+            paint = new Paint();
+            paint.setStyle(Paint.Style.FILL);
+            paint.setAntiAlias(true);
+            paint.setTextSize(16);
+            paint.setTypeface(zombieFace);
+            paint.setShadowLayer(1, 0, 5, 0);
 
             getHolder().addCallback(this);
             setFocusable(true);
         }
 
-        @Override
-        public void onDraw(Canvas canvas) {
+        public void onDraw(Canvas canvas, long gameTime) {
             canvas.drawBitmap(background, 0, 0, null);
             canvas.drawBitmap(player, posX, posY, null);
             for(Swarm swarm : swarms) {
                 swarm.draw(canvas);
             }
+
+            score += _r.nextInt(20);
+
+            paint.setColor(Color.RED);
+            canvas.drawText("SWARMS: "+swarms.size(), 10, 20, paint);
+            paint.setColor(Color.GREEN);
+            canvas.drawText("SCORE: "+score, 120, 20, paint);
+            paint.setColor(Color.YELLOW);
+            canvas.drawText("TIME: "+gameTime/1000, 250, 20, paint);
         }
 
         @Override
