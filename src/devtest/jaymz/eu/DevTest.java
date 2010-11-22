@@ -118,7 +118,7 @@ public class DevTest extends Activity
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             synchronized (_thread.getSurfaceHolder()) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
                     Sprite sprite = new Sprite(BitmapFactory.decodeResource(getResources(), R.drawable.invader));
                     sprite.getCoordinates().setX((int) event.getX() - sprite.getGraphic().getWidth() / 2);
                     sprite.getCoordinates().setY((int) event.getY() - sprite.getGraphic().getHeight() / 2);
