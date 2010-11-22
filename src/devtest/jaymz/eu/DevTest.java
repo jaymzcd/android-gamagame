@@ -15,8 +15,10 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.media.MediaPlayer;
 
 import devtest.jaymz.eu.Sprite;
+import devtest.jaymz.eu.SoundManager;
 
 public class DevTest extends Activity
 {
@@ -73,9 +75,21 @@ public class DevTest extends Activity
         private TutorialThread _thread;
         private ArrayList<Sprite> _sprites = new ArrayList<Sprite>();
         private Random _r = new Random();
+        private SoundManager soundManager;
+        private MediaPlayer mp;
+        private Bitmap background;
         
         public Panel(Context context) {
             super(context);
+
+            mp = MediaPlayer.create(context, R.raw.zod);
+
+            /*soundManager = new SoundManager();
+            soundManager.initSounds(getBaseContext());
+            soundManager.addSound(1, R.raw.zod);*/
+
+            background = BitmapFactory.decodeResource(getResources(), R.drawable.base);
+
             getHolder().addCallback(this);
             _thread = new TutorialThread(getHolder(), this);
             setFocusable(true);
@@ -83,7 +97,7 @@ public class DevTest extends Activity
 
         @Override
         public void onDraw(Canvas canvas) {
-            canvas.drawColor(Color.BLACK);
+            canvas.drawBitmap(background, 0, 0, null);
             for(Sprite sprite : _sprites) {
                 sprite.Update();
                 canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
@@ -97,6 +111,9 @@ public class DevTest extends Activity
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
+            //soundManager.playSound(1);
+            mp.start();
+
             _thread.setRunning(true);
             _thread.start();
         }
@@ -109,6 +126,7 @@ public class DevTest extends Activity
                 try {
                     _thread.join();
                     retry = false;
+                    mp.stop();
                 } catch (InterruptedException e) {
                     // we will try it again and again...
                 }
