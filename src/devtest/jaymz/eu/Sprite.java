@@ -25,7 +25,6 @@ class Sprite {
         _bitmap = bitmap;
 
         _coordinates = new Coordinates();
-        Log.d("SPR", "Direction is " + _direction);
 
         /* Create a randomish green hue to paint over the base white
            of the sprite. Apply via the colorfilter and store for later */
@@ -34,7 +33,6 @@ class Sprite {
         hsv[0] = 93 - _r.nextInt(20);
         hsv[1] = 0xff;
         hsv[2] = 0xff;
-        Log.d("SPR", "HSV: "+hsv[0]+" "+hsv[1]+" "+hsv[2]);
 
         ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
         _paint.setColorFilter(f);

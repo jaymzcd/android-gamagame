@@ -16,8 +16,10 @@ import android.view.SurfaceHolder;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import devtest.jaymz.eu.Sprite;
+import devtest.jaymz.eu.Swarm;
 import devtest.jaymz.eu.SoundManager;
 
 public class DevTest extends Activity
@@ -73,11 +75,13 @@ public class DevTest extends Activity
     class Panel extends SurfaceView implements SurfaceHolder.Callback {
 
         private TutorialThread _thread;
-        private ArrayList<Sprite> _sprites = new ArrayList<Sprite>();
+        private ArrayList<Swarm> swarms = new ArrayList<Swarm>();
         private Random _r = new Random();
         private SoundManager soundManager;
         private MediaPlayer mp;
         private Bitmap background;
+        private Bitmap player;
+        private float posX, posY;
         
         public Panel(Context context) {
             super(context);
@@ -89,18 +93,18 @@ public class DevTest extends Activity
             soundManager.addSound(1, R.raw.zod);*/
 
             background = BitmapFactory.decodeResource(getResources(), R.drawable.base);
+            player = BitmapFactory.decodeResource(getResources(), R.drawable.guitar);
 
             getHolder().addCallback(this);
-            _thread = new TutorialThread(getHolder(), this);
             setFocusable(true);
         }
 
         @Override
         public void onDraw(Canvas canvas) {
             canvas.drawBitmap(background, 0, 0, null);
-            for(Sprite sprite : _sprites) {
-                sprite.Update();
-                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
+            canvas.drawBitmap(player, posX, posY, null);
+            for(Swarm swarm : swarms) {
+                swarm.draw(canvas);
             }
         }
 
@@ -112,8 +116,9 @@ public class DevTest extends Activity
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             //soundManager.playSound(1);
+            //Log.d("GBB", "Surface created");
             mp.start();
-
+            _thread = new TutorialThread(getHolder(), this);
             _thread.setRunning(true);
             _thread.start();
         }
@@ -121,12 +126,13 @@ public class DevTest extends Activity
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             boolean retry = true;
+            mp.stop();
             _thread.setRunning(false);
             while (retry) {
                 try {
                     _thread.join();
                     retry = false;
-                    mp.stop();
+                    //Log.d("GBB", "Thread stopped");
                 } catch (InterruptedException e) {
                     // we will try it again and again...
                 }
@@ -135,12 +141,13 @@ public class DevTest extends Activity
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
+            posX = event.getX();
+            posY = event.getY();
+
             synchronized (_thread.getSurfaceHolder()) {
-                if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Sprite sprite = new Sprite(BitmapFactory.decodeResource(getResources(), R.drawable.invader));
-                    sprite.getCoordinates().setX((int) event.getX() - sprite.getGraphic().getWidth() / 2);
-                    sprite.getCoordinates().setY((int) event.getY() - sprite.getGraphic().getHeight() / 2);
-                    _sprites.add(sprite);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    Swarm swarm = new Swarm(getContext(), posX, posY);
+                    swarms.add(swarm);
                 }
                 return true;
             }
