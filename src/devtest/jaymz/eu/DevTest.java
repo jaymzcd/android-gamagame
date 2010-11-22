@@ -9,9 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.SurfaceView;
@@ -89,10 +86,7 @@ public class DevTest extends Activity
             canvas.drawColor(Color.BLACK);
             for(Sprite sprite : _sprites) {
                 sprite.Update();
-                Paint p = new Paint();
-                ColorFilter f = new LightingColorFilter(Color.rgb(_r.nextInt(255), _r.nextInt(255), _r.nextInt(255)), 1);
-                p.setColorFilter(f);
-                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), p);
+                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
             }
         }
 
