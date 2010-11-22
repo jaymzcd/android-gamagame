@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Color;
+import android.graphics.Canvas;
 import java.util.Random;
 import android.util.Log;
 
@@ -14,18 +15,21 @@ class Sprite {
     private int _ticker = 0;
     private int _direction = 1;
     private int _speed = 1;
+    private int _rotation = 0;
+    private float _scale = 2;
+    private String _name;
+    static protected int cnt = 0;
     
     private Random _r = new Random();
     private Paint _paint;
 
     public Sprite(Bitmap bitmap) {
-
+        Sprite.cnt += 1;
+        
         _direction = _r.nextInt(3) - 1;
         _speed += _r.nextInt(5);
         _bitmap = bitmap;
-
         _coordinates = new Coordinates();
-        Log.d("SPR", "Direction is " + _direction);
 
         /* Create a randomish green hue to paint over the base white
            of the sprite. Apply via the colorfilter and store for later */
@@ -34,10 +38,27 @@ class Sprite {
         hsv[0] = 93 - _r.nextInt(20);
         hsv[1] = 0xff;
         hsv[2] = 0xff;
-        Log.d("SPR", "HSV: "+hsv[0]+" "+hsv[1]+" "+hsv[2]);
 
-        ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
+        //ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
+        ColorFilter f = new LightingColorFilter(Color.rgb(255, 255 ,255), 1);
         _paint.setColorFilter(f);
+
+        Log.d("SPR", "Made new sprite: " + this.getName());
+        this.getCnt();
+    }
+
+    static public void getCnt() {
+        Log.d("SPR", "Now: " + Sprite.cnt);
+    }
+
+    public void kill() {
+        Log.d("SPR", "Killing sprite: " + this.getName());
+        this.getCnt();
+        Sprite.cnt -= 1;
+    }
+
+    public String getName() {
+        return "Sprite #" + Sprite.cnt;
     }
 
     public Bitmap getGraphic() {
@@ -51,10 +72,29 @@ class Sprite {
     public Paint getPaint() {
         return _paint;
     }
+
+    public int rotation() {
+        _rotation += 1;
+        return _rotation;
+    }
+
+    public float getScale() {
+        _scale -= (float)0.002;
+        if (_scale > (float)0.5) {
+            return _scale;
+        } else {
+            return (float)0.5;
+        }
+    }
     
-    public void Update() {
+    public Canvas Update(Canvas canvas) {
         _coordinates.setX(_coordinates.getX()+1*_direction);
         _coordinates.setY(_coordinates.getY()+_speed);
+        float scale = this.getScale();
+        canvas.rotate(this.rotation()*_direction, _coordinates.getX(), _coordinates.getY());
+        canvas.scale(scale, scale, _coordinates.getX(), _coordinates.getY());
+        canvas.drawBitmap(this.getGraphic(), this.getCoordinates().getX(), this.getCoordinates().getY(), this.getPaint());
+        return canvas;
     }
 
 

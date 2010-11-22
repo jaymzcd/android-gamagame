@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.MotionEvent;
 import android.view.Window;
+import android.util.Log;
 
 import devtest.jaymz.eu.Sprite;
 
@@ -51,7 +52,7 @@ public class DevTest extends Activity
                 try {
                     c = _surfaceHolder.lockCanvas(null);
                     synchronized (_surfaceHolder) {
-                        _panel.onDraw(c);
+                        _panel.drawSurface(c);
                     }
                 } finally {
                     if (c != null) {
@@ -81,18 +82,25 @@ public class DevTest extends Activity
             setFocusable(true);
         }
 
+        public void drawSurface(Canvas canvas) {
+            this.onDraw(canvas);
+            this.reap();
+        }
+
         @Override
         public void onDraw(Canvas canvas) {
             canvas.drawColor(Color.BLACK);
             for(Sprite sprite : _sprites) {
-                sprite.Update();
-                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
+                canvas.save();
+                canvas = sprite.Update(canvas);
+                canvas.restore();
             }
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             // TODO Auto-generated method stub
+            Log.d("SPR", "Changed!");
         }
 
         @Override
@@ -119,12 +127,23 @@ public class DevTest extends Activity
         public boolean onTouchEvent(MotionEvent event) {
             synchronized (_thread.getSurfaceHolder()) {
                 if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Sprite sprite = new Sprite(BitmapFactory.decodeResource(getResources(), R.drawable.invader));
+                    Sprite sprite = new Sprite(BitmapFactory.decodeResource(getResources(), R.drawable.flake));
                     sprite.getCoordinates().setX((int) event.getX() - sprite.getGraphic().getWidth() / 2);
                     sprite.getCoordinates().setY((int) event.getY() - sprite.getGraphic().getHeight() / 2);
                     _sprites.add(sprite);
                 }
                 return true;
+            }
+        }
+
+        public void reap() {
+            for(int i=0; i<_sprites.size(); i++) {
+                Sprite sprite = (Sprite)_sprites.get(i);
+                if (sprite.getCoordinates().getY() > 480) {
+                    Log.d("DET", "Killed sprite");
+                    sprite.kill();
+                    _sprites.remove(i);
+                }
             }
         }
 
