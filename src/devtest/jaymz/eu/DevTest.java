@@ -22,6 +22,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 
 import devtest.jaymz.eu.Sprite;
+import devtest.jaymz.eu.Player;
 import devtest.jaymz.eu.Swarm;
 import devtest.jaymz.eu.SoundManager;
 
@@ -83,7 +84,7 @@ public class DevTest extends Activity
         private SoundManager soundManager;
         private MediaPlayer mp;
         private Bitmap background;
-        private Bitmap player;
+        private Player player;
         private float posX, posY;
         private int score = 0;
 
@@ -108,7 +109,7 @@ public class DevTest extends Activity
             soundManager.addSound(1, R.raw.zod);*/
 
             background = BitmapFactory.decodeResource(getResources(), R.drawable.base);
-            player = BitmapFactory.decodeResource(getResources(), R.drawable.guitar);
+            player = new Player(context);
             zombieFace = Typeface.createFromAsset(getContext().getAssets(), "zombie.ttf");
             solsticeFace = Typeface.createFromAsset(getContext().getAssets(), "solstice.ttf");
 
@@ -176,9 +177,9 @@ public class DevTest extends Activity
         }
 
         public void drawPlayer(Canvas canvas) {
-            float playerX = posX - (player.getWidth()/2);
-            float playerY = posY - (player.getHeight()/2);
-            canvas.drawBitmap(player, playerX, playerY, null);
+            float playerX = posX - (player.getGraphic().getWidth()/2);
+            float playerY = posY - (player.getGraphic().getHeight()/2);
+            canvas.drawBitmap(player.getGraphic(), playerX, playerY, null);
         }
 
         public void drawHUD(Canvas canvas) {

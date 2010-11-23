@@ -26,16 +26,15 @@ class Sprite {
 
     private int ticker = 0; // used to make changes as updates ticks by
 
-    public Sprite(Bitmap bitmap) {
+    public Sprite() {
 
         _direction = getRandomDirection();
         angularDirection = getRandomDirection();
         if(angularDirection==0) {
             angularDirection = 1;
         }
-        
+
         _speed += _r.nextInt(5);
-        _bitmap = bitmap;
 
         _coordinates = new Coordinates();
         matrix = new Matrix();
@@ -53,8 +52,17 @@ class Sprite {
         _paint.setColorFilter(f);
     }
 
+    public Sprite(Bitmap bitmap) {
+        this();
+        setGraphic(bitmap);
+    }
+
     public Bitmap getGraphic() {
         return _bitmap;
+    }
+
+    public void setGraphic(Bitmap bitmap) {
+        _bitmap = bitmap;
     }
 
     public Coordinates getCoordinates() {
