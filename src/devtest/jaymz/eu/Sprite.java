@@ -18,9 +18,11 @@ class Sprite {
     private Random _r = new Random();
     private Paint _paint;
 
+    private int ticker = 0; // used to make changes as updates ticks by
+
     public Sprite(Bitmap bitmap) {
 
-        _direction = _r.nextInt(3) - 1;
+        _direction = getRandomDirection();
         _speed += _r.nextInt(5);
         _bitmap = bitmap;
 
@@ -49,9 +51,18 @@ class Sprite {
     public Paint getPaint() {
         return _paint;
     }
-    
+
+    public int getRandomDirection() {
+        return (_r.nextInt(3) - 1);
+    }
+
     public void Update() {
-        _coordinates.setX(_coordinates.getX()+1*_direction);
+        ticker++;
+        if (ticker % 50 == 0) {
+            _direction = getRandomDirection(); // switch randomly
+        }
+
+        _coordinates.setX(_coordinates.getX()+_direction);
         _coordinates.setY(_coordinates.getY()+_speed);
     }
 

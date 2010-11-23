@@ -95,6 +95,9 @@ public class DevTest extends Activity
         private long gameTimer;
         private long startTime;
 
+        private final int COUNTDOWN = 5;
+        private final int MAX_SWARMS = 4;
+
         public Panel(Context context) {
             super(context);
 
@@ -128,33 +131,56 @@ public class DevTest extends Activity
             setFocusable(true);
         }
 
-        public void onDraw(Canvas canvas) {
-            gameTimer = System.currentTimeMillis() - startTime;
 
+        public boolean checkForSwarms() {
+            // Introduces new swarms every few seconds as long as the
+            // current total is within the limit 
+            if((int)gameSeconds() % 3 == 0 && (swarms.size() < MAX_SWARMS)) {
+                Swarm swarm = new Swarm(getContext(), _r.nextInt(200)+50, 80, R.drawable.philly1);
+                swarms.add(swarm);
+                return true;
+            }
+            return false;
+        }
+
+        public void onDraw(Canvas canvas) {
+            // Update our timers and swarm enemies
+            gameTimer = System.currentTimeMillis() - startTime;
+            checkForSwarms();
+
+            // Start drawing bits - background & player layers
             canvas.drawBitmap(background, 0, 0, null);
             canvas.drawBitmap(player, posX, posY, null);
 
+            // Update and draw the enemies
             for(Swarm swarm : swarms) {
                 swarm.draw(canvas);
             }
 
-            if(gameSeconds()>3) {
+            // Time dependant drawing
+            if(gameSeconds()>COUNTDOWN) {
                 score += _r.nextInt(20);
             }
-
-            if (gameSeconds()<3) {
+            if (gameSeconds()<COUNTDOWN) {
                 drawUIText(canvas, "GET READY", msgPaint, 250);
             }
 
+            // Finally info / score
+            drawHUD();
+        }
+
+        public void drawHUD() {
+            // Draws common information on the very top of the canvas
             infoPaint.setColor(Color.RED);
             drawUIText(canvas, "SWARMS: "+swarms.size(), infoPaint, 10, 20);
             infoPaint.setColor(Color.GREEN);
             drawUIText(canvas, "SCORE: "+score, infoPaint, 120, 20);
             infoPaint.setColor(Color.YELLOW);
-            drawUIText(canvas, "TIME: "+gameSeconds(), infoPaint, 250, 20);
+            drawUIText(canvas, "TIME: "+(int)gameSeconds(), infoPaint, 250, 20);
         }
 
         public void drawUIText(Canvas canvas, String msg, Paint paint, float xpos, float ypos) {
+            // Helper to draw text in the canvas
             canvas.drawText(msg, xpos, ypos, paint);
         }
 
@@ -166,7 +192,8 @@ public class DevTest extends Activity
         }
 
         public float gameSeconds() {
-            return (float)(gameTimer/1000);
+            // Returns the total seconds for the game so far (eg 4.125)
+            return (float)(gameTimer/1000.0);
         }
 
         @Override
@@ -204,13 +231,13 @@ public class DevTest extends Activity
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
+            // Following store position for player via touch
             posX = event.getX();
             posY = event.getY();
 
             synchronized (_thread.getSurfaceHolder()) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    Swarm swarm = new Swarm(getContext(), posX, posY);
-                    swarms.add(swarm);
+
                 }
                 return true;
             }
