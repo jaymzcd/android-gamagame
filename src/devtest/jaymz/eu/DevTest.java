@@ -96,7 +96,7 @@ public class DevTest extends Activity
         private long startTime;
 
         private final int COUNTDOWN = 5;
-        private final int MAX_SWARMS = 4;
+        private final int MAX_SWARMS = 5;
 
         public Panel(Context context) {
             super(context);
@@ -136,7 +136,7 @@ public class DevTest extends Activity
             // Introduces new swarms every few seconds as long as the
             // current total is within the limit 
             if((int)gameSeconds() % 3 == 0 && (swarms.size() < MAX_SWARMS)) {
-                Swarm swarm = new Swarm(getContext(), _r.nextInt(200)+50, 80, R.drawable.philly1);
+                Swarm swarm = new Swarm(getContext(), _r.nextInt(200)+50, 80);
                 swarms.add(swarm);
                 return true;
             }

@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import java.util.Random;
 import android.util.Log;
 
@@ -15,7 +16,11 @@ class Sprite {
     private int _direction = 1;
     private int _speed = 1;
     private boolean alive = true;
-    
+    private Matrix matrix;
+    private float scale;
+    private float angularVelocity;
+    private int angularDirection;
+
     private Random _r = new Random();
     private Paint _paint;
 
@@ -24,11 +29,18 @@ class Sprite {
     public Sprite(Bitmap bitmap) {
 
         _direction = getRandomDirection();
+        angularDirection = getRandomDirection();
+        if(angularDirection==0) {
+            angularDirection = 1;
+        }
+        
         _speed += _r.nextInt(5);
         _bitmap = bitmap;
 
         _coordinates = new Coordinates();
-
+        matrix = new Matrix();
+        scale = (_r.nextFloat()/2)+1;
+        angularVelocity = _r.nextFloat()+1;
         /* Create a randomish green hue to paint over the base white
            of the sprite. Apply via the colorfilter and store for later */
         _paint = new Paint();
@@ -75,6 +87,14 @@ class Sprite {
         return alive;
     }
 
+
+    public Matrix getMatrix() {
+        // Used to transform and pass position info to canvas
+        matrix.setRotate(ticker*angularVelocity*angularDirection);
+        matrix.postTranslate(_coordinates._x, _coordinates._y);
+        matrix.postScale(scale, scale);
+        return matrix;
+    }
 
     // Co-ordinate holding class
     public class Coordinates {
