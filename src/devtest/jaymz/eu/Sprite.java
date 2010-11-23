@@ -12,17 +12,15 @@ import android.util.Log;
 class Sprite {
     protected Bitmap _bitmap;
     protected Coordinates coordinates ;
-    protected int _ticker = 0;
-    protected int direction = 1;
-    protected int speed = 1;
+    protected int direction;
+    protected int speed;
     protected boolean alive = true;
-    protected Matrix matrix;
     protected float scale;
     protected float angularVelocity;
     protected int angularDirection;
-
     protected Random _r = new Random();
     protected Paint paint;
+    protected Matrix matrix;
 
     protected int ticker = 0; // used to make changes as updates ticks by
 
