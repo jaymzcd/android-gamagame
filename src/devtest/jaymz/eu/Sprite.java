@@ -10,51 +10,44 @@ import java.util.Random;
 import android.util.Log;
 
 class Sprite {
-    private Bitmap _bitmap;
-    private Coordinates _coordinates;
-    private int _ticker = 0;
-    private int _direction = 1;
-    private int _speed = 1;
-    private boolean alive = true;
-    private Matrix matrix;
-    private float scale;
-    private float angularVelocity;
-    private int angularDirection;
+    protected Bitmap _bitmap;
+    protected Coordinates coordinates ;
+    protected int _ticker = 0;
+    protected int direction = 1;
+    protected int speed = 1;
+    protected boolean alive = true;
+    protected Matrix matrix;
+    protected float scale;
+    protected float angularVelocity;
+    protected int angularDirection;
 
-    private Random _r = new Random();
-    private Paint _paint;
+    protected Random _r = new Random();
+    protected Paint paint;
 
-    private int ticker = 0; // used to make changes as updates ticks by
+    protected int ticker = 0; // used to make changes as updates ticks by
 
     public Sprite() {
-
-        _direction = getRandomDirection();
-        angularDirection = getRandomDirection();
-        if(angularDirection==0) {
-            angularDirection = 1;
-        }
-
-        _speed += _r.nextInt(5);
-
-        _coordinates = new Coordinates();
+        coordinates  = new Coordinates();
         matrix = new Matrix();
-        scale = (_r.nextFloat()/2)+1;
-        angularVelocity = _r.nextFloat()+1;
-        /* Create a randomish green hue to paint over the base white
-           of the sprite. Apply via the colorfilter and store for later */
-        _paint = new Paint();
-        float[] hsv = new float[3];
-        hsv[0] = 93 - _r.nextInt(20);
-        hsv[1] = 0xff;
-        hsv[2] = 0xff;
-
-        ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
-        _paint.setColorFilter(f);
+        paint = new Paint();
+        setDynamics();
+        setPaint();
     }
 
     public Sprite(Bitmap bitmap) {
         this();
         setGraphic(bitmap);
+    }
+
+    public void setDynamics() {
+        direction = 1;
+        speed = 10;
+        angularVelocity = 0;
+        angularDirection = 0;
+    }
+
+    public void setPaint() {
+        // Holder
     }
 
     public Bitmap getGraphic() {
@@ -66,48 +59,43 @@ class Sprite {
     }
 
     public Coordinates getCoordinates() {
-        return _coordinates;
+        return coordinates ;
     }
 
     public Paint getPaint() {
-        return _paint;
-    }
-
-    public int getRandomDirection() {
-        return (_r.nextInt(3) - 1);
+        return paint;
     }
 
     public void Update() {
         ticker++;
-        if (ticker % 50 == 0) {
-            _direction = getRandomDirection(); // switch randomly
-        }
-
-        _coordinates.setX(_coordinates.getX()+_direction);
-        _coordinates.setY(_coordinates.getY()+_speed);
+        coordinates.setX(coordinates.getX()+direction);
+        coordinates.setY(coordinates.getY()+speed);
     }
 
     public boolean isAlive(float bounds) {
         // If sprite y-coord is outside bounds it's dead
-        if (_coordinates._y > bounds) {
+        if (coordinates._y > bounds) {
             alive = false;
         }
         return alive;
     }
 
-
     public Matrix getMatrix() {
         // Used to transform and pass position info to canvas
         matrix.setRotate(ticker*angularVelocity*angularDirection);
-        matrix.postTranslate(_coordinates._x, _coordinates._y);
+        matrix.postTranslate(coordinates._x, coordinates._y);
         matrix.postScale(scale, scale);
         return matrix;
     }
 
+    public void setScale(float _scale) {
+        scale = _scale;
+    }
+
     // Co-ordinate holding class
     public class Coordinates {
-        private int _x = 100;
-        private int _y = 0;
+        protected int _x = 100;
+        protected int _y = 0;
 
         public int getX() {
             return _x + _bitmap.getWidth() / 2;
