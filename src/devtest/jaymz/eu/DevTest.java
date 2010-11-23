@@ -150,7 +150,7 @@ public class DevTest extends Activity
 
             // Start drawing bits - background & player layers
             canvas.drawBitmap(background, 0, 0, null);
-            canvas.drawBitmap(player, posX, posY, null);
+            drawPlayer(canvas);
 
             // Update and draw the enemies, checking if we have any "dead"
             // swarms first and if so removing them so they can be repopulated
@@ -173,6 +173,12 @@ public class DevTest extends Activity
 
             // Finally info / score
             drawHUD(canvas);
+        }
+
+        public void drawPlayer(Canvas canvas) {
+            float playerX = posX - (player.getWidth()/2);
+            float playerY = posY - (player.getHeight()/2);
+            canvas.drawBitmap(player, playerX, playerY, null);
         }
 
         public void drawHUD(Canvas canvas) {

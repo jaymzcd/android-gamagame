@@ -40,12 +40,18 @@ class Swarm {
     }
 
     public int getRandomSprite() {
-        int roll = _r.nextInt(4);
+        int roll = _r.nextInt(5);
         switch(roll) {
             case 0:
                 return R.drawable.philly1;
             case 1:
                 return R.drawable.luke1;
+            case 2:
+                return R.drawable.joe1;
+            case 3:
+                return R.drawable.paul1;
+            case 4:
+                return R.drawable.domo1;
         }
         return R.drawable.philly1;
     }
