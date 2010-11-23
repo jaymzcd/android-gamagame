@@ -14,6 +14,7 @@ class Swarm {
     private ArrayList<Sprite> sprites = new ArrayList<Sprite>();
     private int cnt = 4; // number to make
     private Random _r = new Random();
+    private boolean alive = true; // whether or not all our sprites are "dead"
 
     public Swarm(Context context, float x, float y, int imageResource) {
         for(int i=0; i<cnt; i++) {
@@ -25,9 +26,21 @@ class Swarm {
     }
 
     public void draw(Canvas canvas) {
-        for(Sprite sprite : sprites) {
-            sprite.Update();
-            canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
+        for(int i=0; i<sprites.size(); i++) {
+            Sprite sprite = (Sprite)sprites.get(i);
+            if (sprite.isAlive(canvas.getHeight())) {
+                sprite.Update();
+                canvas.drawBitmap(sprite.getGraphic(), sprite.getCoordinates().getX(), sprite.getCoordinates().getY(), sprite.getPaint());
+            } else {
+                sprites.remove(i);
+            }
         }
+    }
+
+    public boolean isAlive() {
+        if(sprites.size()==0) {
+            alive = false;
+        }
+        return alive;
     }
 }

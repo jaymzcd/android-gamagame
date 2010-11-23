@@ -14,6 +14,7 @@ class Sprite {
     private int _ticker = 0;
     private int _direction = 1;
     private int _speed = 1;
+    private boolean alive = true;
     
     private Random _r = new Random();
     private Paint _paint;
@@ -64,6 +65,14 @@ class Sprite {
 
         _coordinates.setX(_coordinates.getX()+_direction);
         _coordinates.setY(_coordinates.getY()+_speed);
+    }
+
+    public boolean isAlive(float bounds) {
+        // If sprite y-coord is outside bounds it's dead
+        if (_coordinates._y > bounds) {
+            alive = false;
+        }
+        return alive;
     }
 
 

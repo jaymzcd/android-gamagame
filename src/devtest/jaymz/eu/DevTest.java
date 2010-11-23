@@ -152,9 +152,15 @@ public class DevTest extends Activity
             canvas.drawBitmap(background, 0, 0, null);
             canvas.drawBitmap(player, posX, posY, null);
 
-            // Update and draw the enemies
-            for(Swarm swarm : swarms) {
-                swarm.draw(canvas);
+            // Update and draw the enemies, checking if we have any "dead"
+            // swarms first and if so removing them so they can be repopulated
+            for(int i=0; i<swarms.size(); i++) {
+                Swarm swarm = (Swarm)swarms.get(i);
+                if(swarm.isAlive()) {
+                    swarm.draw(canvas);
+                } else {
+                    swarms.remove(swarm);
+                }
             }
 
             // Time dependant drawing
@@ -166,10 +172,10 @@ public class DevTest extends Activity
             }
 
             // Finally info / score
-            drawHUD();
+            drawHUD(canvas);
         }
 
-        public void drawHUD() {
+        public void drawHUD(Canvas canvas) {
             // Draws common information on the very top of the canvas
             infoPaint.setColor(Color.RED);
             drawUIText(canvas, "SWARMS: "+swarms.size(), infoPaint, 10, 20);
