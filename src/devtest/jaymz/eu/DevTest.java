@@ -40,13 +40,10 @@ public class DevTest extends Activity
         private SurfaceHolder _surfaceHolder;
         private Panel _panel;
         private boolean _run = false;
-        private long gameTimer;
-        private long startTime;
 
         public TutorialThread(SurfaceHolder surfaceHolder, Panel panel) {
             _surfaceHolder = surfaceHolder;
             _panel = panel;
-            startTime = System.currentTimeMillis();
         }
 
         public void setRunning(boolean run) {
@@ -58,11 +55,10 @@ public class DevTest extends Activity
             Canvas c;
             while (_run) {
                 c = null;
-                gameTimer = System.currentTimeMillis() - startTime;
                 try {
                     c = _surfaceHolder.lockCanvas(null);
                     synchronized (_surfaceHolder) {
-                        _panel.onDraw(c, gameTimer);
+                        _panel.onDraw(c);
                     }
                 } finally {
                     if (c != null) {
@@ -90,9 +86,15 @@ public class DevTest extends Activity
         private Bitmap player;
         private float posX, posY;
         private int score = 0;
+
         private Typeface zombieFace;
-        private Paint paint;
-        
+        private Typeface solsticeFace;
+        private Paint infoPaint;
+        private Paint msgPaint;
+
+        private long gameTimer;
+        private long startTime;
+
         public Panel(Context context) {
             super(context);
 
@@ -104,34 +106,67 @@ public class DevTest extends Activity
 
             background = BitmapFactory.decodeResource(getResources(), R.drawable.base);
             player = BitmapFactory.decodeResource(getResources(), R.drawable.guitar);
-            zombieFace = Typeface.createFromAsset(getContext().getAssets(), "ZOMBIE.TTF");
+            zombieFace = Typeface.createFromAsset(getContext().getAssets(), "zombie.ttf");
+            solsticeFace = Typeface.createFromAsset(getContext().getAssets(), "solstice.ttf");
 
-            paint = new Paint();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setAntiAlias(true);
-            paint.setTextSize(16);
-            paint.setTypeface(zombieFace);
-            paint.setShadowLayer(1, 0, 5, 0);
+            infoPaint = new Paint();
+            infoPaint.setStyle(Paint.Style.FILL);
+            infoPaint.setAntiAlias(true);
+            infoPaint.setTextSize(16);
+            infoPaint.setTypeface(zombieFace);
+            infoPaint.setShadowLayer(1, 0, 5, 0);
+
+            msgPaint = new Paint();
+            msgPaint.setStyle(Paint.Style.FILL);
+            msgPaint.setAntiAlias(true);
+            msgPaint.setTextSize(34);
+            msgPaint.setTypeface(solsticeFace);
+            msgPaint.setShadowLayer(3, 0, 5, 0);
+            msgPaint.setColor(Color.WHITE);
 
             getHolder().addCallback(this);
             setFocusable(true);
         }
 
-        public void onDraw(Canvas canvas, long gameTime) {
+        public void onDraw(Canvas canvas) {
+            gameTimer = System.currentTimeMillis() - startTime;
+
             canvas.drawBitmap(background, 0, 0, null);
             canvas.drawBitmap(player, posX, posY, null);
+
             for(Swarm swarm : swarms) {
                 swarm.draw(canvas);
             }
 
-            score += _r.nextInt(20);
+            if(gameSeconds()>3) {
+                score += _r.nextInt(20);
+            }
 
-            paint.setColor(Color.RED);
-            canvas.drawText("SWARMS: "+swarms.size(), 10, 20, paint);
-            paint.setColor(Color.GREEN);
-            canvas.drawText("SCORE: "+score, 120, 20, paint);
-            paint.setColor(Color.YELLOW);
-            canvas.drawText("TIME: "+gameTime/1000, 250, 20, paint);
+            if (gameSeconds()<3) {
+                drawUIText(canvas, "GET READY", msgPaint, 250);
+            }
+
+            infoPaint.setColor(Color.RED);
+            drawUIText(canvas, "SWARMS: "+swarms.size(), infoPaint, 10, 20);
+            infoPaint.setColor(Color.GREEN);
+            drawUIText(canvas, "SCORE: "+score, infoPaint, 120, 20);
+            infoPaint.setColor(Color.YELLOW);
+            drawUIText(canvas, "TIME: "+gameSeconds(), infoPaint, 250, 20);
+        }
+
+        public void drawUIText(Canvas canvas, String msg, Paint paint, float xpos, float ypos) {
+            canvas.drawText(msg, xpos, ypos, paint);
+        }
+
+        public void drawUIText(Canvas canvas, String msg, Paint paint, float ypos) {
+            // Draws Text centered with vertical offset
+            float textWidth = paint.measureText(msg);
+            float xpos = (canvas.getWidth() - textWidth) / 2;
+            canvas.drawText(msg, xpos, ypos, paint);
+        }
+
+        public float gameSeconds() {
+            return (float)(gameTimer/1000);
         }
 
         @Override
@@ -143,6 +178,8 @@ public class DevTest extends Activity
         public void surfaceCreated(SurfaceHolder holder) {
             //soundManager.playSound(1);
             //Log.d("GBB", "Surface created");
+            startTime = System.currentTimeMillis();
+
             mp.start();
             _thread = new TutorialThread(getHolder(), this);
             _thread.setRunning(true);
