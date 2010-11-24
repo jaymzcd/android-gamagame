@@ -82,11 +82,13 @@ class Sprite {
 
     public Matrix getMatrix() {
         // Used to transform and pass position info to canvas
-        matrix.setTranslate(coordinates._x, coordinates._y);
+        int x = coordinates.getX();
+        int y = coordinates.getY();
+        matrix.setTranslate(x, y);
         if(Math.abs(angularVelocity)>0) {
-            matrix.postRotate(ticker*angularVelocity*angularDirection, coordinates._x, coordinates._y);
+            matrix.postRotate(ticker*angularVelocity*angularDirection, x, y);
         }
-        matrix.postScale(scale, scale, coordinates._x, coordinates._y);
+        matrix.postScale(scale, scale, x, y);
         return matrix;
     }
 
