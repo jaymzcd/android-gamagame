@@ -11,7 +11,8 @@ class Bullet extends Sprite {
 
     public Bullet() {
         super();
-        setDirection(-1); // goes up
+        setVertSpeed(-1); // goes up
+        setHorizSpeed(0); // no drift
         setScale(0.2f);
     }
 

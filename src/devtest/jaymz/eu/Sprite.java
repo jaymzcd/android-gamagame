@@ -14,9 +14,9 @@ import android.util.Log;
 class Sprite {
     protected Bitmap _bitmap;
     protected Coordinates coordinates ;
-    protected int direction;
+    protected int horizSpeed;
     protected int speed;
-    protected int directionSpeed;
+    protected int vertSpeed;
     protected boolean alive = true;
     protected float scale;
     protected float angularVelocity;
@@ -45,9 +45,8 @@ class Sprite {
     }
 
     public void setDynamics() {
-        direction = 1;
-        directionSpeed = 1;
-        speed = 10;
+        horizSpeed = 0;
+        vertSpeed = 0;
         angularVelocity = 0;
         angularDirection = 0;
     }
@@ -74,8 +73,8 @@ class Sprite {
 
     public void Update() {
         ticker++;
-        coordinates.setX(coordinates.getX()+direction);
-        coordinates.setY(coordinates.getY()+speed*directionSpeed);
+        coordinates.setX(coordinates.getX()+horizSpeed);
+        coordinates.setY(coordinates.getY()+vertSpeed);
     }
 
     public boolean isAlive(float bounds) {
@@ -114,8 +113,12 @@ class Sprite {
         scale = _scale;
     }
 
-    public void setDirection(int _direction) {
-        directionSpeed = _direction;
+    public void setVertSpeed(int direction) {
+        vertSpeed = direction;
+    }
+
+    public void setHorizSpeed(int speed) {
+        horizSpeed = speed;
     }
 
     public void setOffset(int offset[]) {

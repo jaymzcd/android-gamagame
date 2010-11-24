@@ -20,13 +20,13 @@ class Enemy extends Sprite {
     }
 
     public void setDynamics() {
-        direction = getRandomDirection();
+        horizSpeed = getRandomDirection();
         angularVelocity = 1;
         angularDirection = getRandomDirection();
         if(angularDirection==0) {
             angularDirection = 1;
         }
-        speed += _r.nextInt(5);
+        vertSpeed += _r.nextInt(5);
     }
 
     public void setPaint() {
@@ -45,7 +45,7 @@ class Enemy extends Sprite {
     public void Update() {
         super.Update();
         if (ticker % 50 == 0) {
-            direction = getRandomDirection(); // switch randomly
+            horizSpeed = getRandomDirection(); // switch randomly
         }
     }
 
