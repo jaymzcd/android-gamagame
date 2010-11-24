@@ -6,6 +6,7 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import java.lang.Math;
 import java.util.Random;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ class Sprite {
         paint = new Paint();
         setDynamics();
         setPaint();
+        setScale(1);
     }
 
     public Sprite(Bitmap bitmap) {
@@ -80,9 +82,11 @@ class Sprite {
 
     public Matrix getMatrix() {
         // Used to transform and pass position info to canvas
-        matrix.setRotate(ticker*angularVelocity*angularDirection);
-        matrix.postTranslate(coordinates._x, coordinates._y);
-        matrix.postScale(scale, scale);
+        matrix.setTranslate(coordinates._x, coordinates._y);
+        if(Math.abs(angularVelocity)>0) {
+            matrix.postRotate(ticker*angularVelocity*angularDirection, coordinates._x, coordinates._y);
+        }
+        matrix.postScale(scale, scale, coordinates._x, coordinates._y);
         return matrix;
     }
 

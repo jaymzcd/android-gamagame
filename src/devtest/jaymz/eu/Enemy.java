@@ -43,11 +43,10 @@ class Enemy extends Sprite {
     }
 
     public void Update() {
-        super();
+        super.Update();
         if (ticker % 50 == 0) {
             direction = getRandomDirection(); // switch randomly
         }
-        Log.d("ENM", this.getCoordinates());
     }
 
     public int getRandomDirection() {
