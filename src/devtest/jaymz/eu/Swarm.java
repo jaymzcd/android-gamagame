@@ -13,7 +13,7 @@ import devtest.jaymz.eu.Enemy;
 
 class Swarm {
     private ArrayList<Enemy> sprites = new ArrayList<Enemy>();
-    private int cnt = 2; // number to make
+    private int cnt = 3; // number to make
     private Random _r = new Random();
     private boolean alive = true; // whether or not all our sprites are "dead"
 

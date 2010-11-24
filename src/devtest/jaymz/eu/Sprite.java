@@ -2,6 +2,7 @@ package devtest.jaymz.eu;
 
 import android.graphics.Bitmap;
 import android.graphics.Paint;
+import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Color;
@@ -22,6 +23,9 @@ class Sprite {
     protected Random _r = new Random();
     protected Paint paint;
     protected Matrix matrix;
+    protected int xOffset = 0;
+    protected int yOffset = 0;
+    protected boolean applyOffset = true;
 
     protected int ticker = 0; // used to make changes as updates ticks by
 
@@ -75,25 +79,48 @@ class Sprite {
     public boolean isAlive(float bounds) {
         // If sprite y-coord is outside bounds it's dead
         if (coordinates._y > bounds) {
-            alive = false;
+            coordinates._y = 0;
+            //alive = false;
         }
         return alive;
+    }
+
+    public void enableOffset() {
+        applyOffset = true;
+    }
+
+    public void disableOffset() {
+        applyOffset = false;
     }
 
     public Matrix getMatrix() {
         // Used to transform and pass position info to canvas
         int x = coordinates.getX();
         int y = coordinates.getY();
-        matrix.setTranslate(x, y);
+        matrix.setTranslate(coordinates._x, coordinates._y);
+        if(this.applyOffset) {
+            matrix.postTranslate(xOffset, yOffset);
+        }
+        matrix.postScale(scale, scale, x, y);
         if(Math.abs(angularVelocity)>0) {
             matrix.postRotate(ticker*angularVelocity*angularDirection, x, y);
         }
-        matrix.postScale(scale, scale, x, y);
         return matrix;
     }
 
     public void setScale(float _scale) {
         scale = _scale;
+    }
+
+    public void setOffset(int offset[]) {
+        // Force a reposition the sprite when drawing on top of
+        // any dynamic or event co-ords
+        xOffset = offset[0];
+        yOffset = offset[1];
+    }
+
+    public void draw(Canvas canvas) {
+        canvas.drawBitmap(getGraphic(), getMatrix(), getPaint());
     }
 
     // Co-ordinate holding class

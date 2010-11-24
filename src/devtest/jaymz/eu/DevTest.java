@@ -97,7 +97,7 @@ public class DevTest extends Activity
         private long startTime;
 
         private final int COUNTDOWN = 5;
-        private final int MAX_SWARMS = 5;
+        private final int MAX_SWARMS = 3;
 
         public Panel(Context context) {
             super(context);
@@ -177,9 +177,7 @@ public class DevTest extends Activity
         }
 
         public void drawPlayer(Canvas canvas) {
-            float playerX = posX - (player.getGraphic().getWidth()/2);
-            float playerY = posY - (player.getGraphic().getHeight()/2);
-            canvas.drawBitmap(player.getGraphic(), playerX, playerY, null);
+            player.draw(canvas);
         }
 
         public void drawHUD(Canvas canvas) {
@@ -249,8 +247,9 @@ public class DevTest extends Activity
             posY = event.getY();
 
             synchronized (_thread.getSurfaceHolder()) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
+                if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
+                    player.getCoordinates().setX((int)posX);
+                    player.getCoordinates().setY((int)posY);
                 }
                 return true;
             }

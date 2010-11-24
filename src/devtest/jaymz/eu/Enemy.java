@@ -21,7 +21,7 @@ class Enemy extends Sprite {
 
     public void setDynamics() {
         direction = getRandomDirection();
-        angularVelocity = _r.nextFloat()+1;
+        angularVelocity = 1;
         angularDirection = getRandomDirection();
         if(angularDirection==0) {
             angularDirection = 1;
