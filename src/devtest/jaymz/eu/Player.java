@@ -11,7 +11,6 @@ import android.graphics.Matrix;
 import android.content.Context;
 
 import java.util.Random;
-import java.util.ArrayList;
 import android.util.Log;
 
 import devtest.jaymz.eu.Sprite;
@@ -20,7 +19,6 @@ import devtest.jaymz.eu.Bullet;
 class Player extends Sprite {
 
     Bitmap bulletImage;
-    Bullet bullet;
 
     public Player(Context context) {
         super();
@@ -29,18 +27,17 @@ class Player extends Sprite {
         setScale(0.5f);
         int offsets[] = {0, -40};
         setOffset(offsets);
-        fireBullet();
     }
 
-    public void fireBullet() {
-        bullet = new Bullet();
+    public Bullet fireBullet() {
+        Bullet bullet = new Bullet();
         bullet.setGraphic(bulletImage);
-        bullet.getCoordinates().setX(100);
-        bullet.getCoordinates().setY(100);
+        bullet.getCoordinates().setX(this.getCoordinates().getX());
+        bullet.getCoordinates().setY(this.getCoordinates().getY());
+        return bullet;
     }
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        bullet.draw(canvas);
     }
 }

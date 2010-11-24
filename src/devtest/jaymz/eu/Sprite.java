@@ -16,6 +16,7 @@ class Sprite {
     protected Coordinates coordinates ;
     protected int direction;
     protected int speed;
+    protected int directionSpeed;
     protected boolean alive = true;
     protected float scale;
     protected float angularVelocity;
@@ -45,6 +46,7 @@ class Sprite {
 
     public void setDynamics() {
         direction = 1;
+        directionSpeed = 1;
         speed = 10;
         angularVelocity = 0;
         angularDirection = 0;
@@ -73,7 +75,7 @@ class Sprite {
     public void Update() {
         ticker++;
         coordinates.setX(coordinates.getX()+direction);
-        coordinates.setY(coordinates.getY()+speed);
+        coordinates.setY(coordinates.getY()+speed*directionSpeed);
     }
 
     public boolean isAlive(float bounds) {
@@ -110,6 +112,10 @@ class Sprite {
 
     public void setScale(float _scale) {
         scale = _scale;
+    }
+
+    public void setDirection(int _direction) {
+        directionSpeed = _direction;
     }
 
     public void setOffset(int offset[]) {

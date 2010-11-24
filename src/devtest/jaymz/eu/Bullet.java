@@ -11,6 +11,7 @@ class Bullet extends Sprite {
 
     public Bullet() {
         super();
+        setDirection(-1); // goes up
         setScale(0.2f);
     }
 

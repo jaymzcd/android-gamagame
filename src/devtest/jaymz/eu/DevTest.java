@@ -24,6 +24,7 @@ import android.util.Log;
 import devtest.jaymz.eu.Sprite;
 import devtest.jaymz.eu.Player;
 import devtest.jaymz.eu.Swarm;
+import devtest.jaymz.eu.Bullet;
 import devtest.jaymz.eu.SoundManager;
 
 public class DevTest extends Activity
@@ -80,11 +81,13 @@ public class DevTest extends Activity
 
         private TutorialThread _thread;
         private ArrayList<Swarm> swarms = new ArrayList<Swarm>();
+        private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
         private Random _r = new Random();
         private SoundManager soundManager;
         private MediaPlayer mp;
         private Bitmap background;
         private Player player;
+        private Bullet bullet;
         private float posX, posY;
         private int score = 0;
 
@@ -178,6 +181,10 @@ public class DevTest extends Activity
 
         public void drawPlayer(Canvas canvas) {
             player.draw(canvas);
+            for(Bullet bullet : bullets) {
+                bullet.Update();
+                bullet.draw(canvas);
+            }
         }
 
         public void drawHUD(Canvas canvas) {
@@ -247,9 +254,10 @@ public class DevTest extends Activity
             posY = event.getY();
 
             synchronized (_thread.getSurfaceHolder()) {
-                if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
-                    player.getCoordinates().setX((int)posX);
-                    player.getCoordinates().setY((int)posY);
+                player.getCoordinates().setX((int)posX);
+                player.getCoordinates().setY((int)posY);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    bullets.add(player.fireBullet());
                 }
                 return true;
             }
