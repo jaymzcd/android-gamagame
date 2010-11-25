@@ -30,6 +30,8 @@ class Sprite {
 
     protected int ticker = 0; // used to make changes as updates ticks by
 
+    private boolean DEBUG = true;
+
     public Sprite() {
         coordinates  = new Coordinates();
         matrix = new Matrix();
@@ -77,13 +79,15 @@ class Sprite {
         coordinates.setY(coordinates.getY()+vertSpeed);
     }
 
-    public boolean isAlive(float bounds) {
-        // If sprite y-coord is outside bounds it's dead
-        if (coordinates._y > bounds) {
-            coordinates._y = 0;
-            //alive = false;
+    public boolean withinCanvas(Canvas canvas) {
+        // Check if sprite is within the canvas
+        int maxY = canvas.getHeight();
+        int maxX = canvas.getWidth();
+
+        if ((coordinates._y > maxY)||(coordinates._y < 0)||(coordinates._x > maxX)||(coordinates._x < 0)) {
+            return false;
         }
-        return alive;
+        return true;
     }
 
     public void enableOffset() {
@@ -130,6 +134,39 @@ class Sprite {
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(getGraphic(), getMatrix(), getPaint());
+    }
+
+
+    /* Following 4 methods are helpers to get our bounding box
+       for the basic rectangular "collision detection" */
+    public int topPoint() {
+        return coordinates._y;
+    }
+
+    public int leftPoint() {
+        return coordinates._x;
+    }
+
+    public int rightPoint() {
+        return coordinates._x + _bitmap.getWidth();
+    }
+    
+    public int bottomPoint() {
+        return coordinates._y + _bitmap.getWidth();
+    }
+
+    /* Simple rectangular collision detection */
+    public boolean coordinatesWithinBounds(Sprite.Coordinates coordinates) {
+        if(DEBUG) {
+            Log.d("SPR", "Bounds for sprite ("+leftPoint()+", "+rightPoint()+"), ("+topPoint()+", "+bottomPoint()+")");
+            Log.d("SPR", "Test coords ("+coordinates._x+", "+coordinates._y+")");
+        }
+        if((coordinates.getX()>leftPoint()&&coordinates.getX()<rightPoint())&&(coordinates.getY()>topPoint()&&coordinates.getY()<bottomPoint())) {
+            if(DEBUG)
+                Log.d("SPR", "Within BOUNDS!");
+            return true;
+        }
+        return false;
     }
 
     // Co-ordinate holding class

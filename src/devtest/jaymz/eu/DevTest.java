@@ -100,7 +100,7 @@ public class DevTest extends Activity
         private long startTime;
 
         private final int COUNTDOWN = 5;
-        private final int MAX_SWARMS = 3;
+        private final int MAX_SWARMS = 1;
 
         public Panel(Context context) {
             super(context);
@@ -139,7 +139,7 @@ public class DevTest extends Activity
         public boolean checkForSwarms() {
             // Introduces new swarms every few seconds as long as the
             // current total is within the limit 
-            if((int)gameSeconds() % 3 == 0 && (swarms.size() < MAX_SWARMS)) {
+            if((int)gameSeconds() % 1 == 0 && (swarms.size() < MAX_SWARMS)) {
                 Swarm swarm = new Swarm(getContext(), _r.nextInt(200)+50, 80);
                 swarms.add(swarm);
                 return true;
@@ -155,6 +155,7 @@ public class DevTest extends Activity
             // Start drawing bits - background & player layers
             canvas.drawBitmap(background, 0, 0, null);
             drawPlayer(canvas);
+            drawBullets(canvas);
 
             // Update and draw the enemies, checking if we have any "dead"
             // swarms first and if so removing them so they can be repopulated
@@ -169,7 +170,7 @@ public class DevTest extends Activity
 
             // Time dependant drawing
             if(gameSeconds()>COUNTDOWN) {
-                score += _r.nextInt(20);
+
             }
             if (gameSeconds()<COUNTDOWN) {
                 drawUIText(canvas, "GET READY", msgPaint, 250);
@@ -181,9 +182,19 @@ public class DevTest extends Activity
 
         public void drawPlayer(Canvas canvas) {
             player.draw(canvas);
-            for(Bullet bullet : bullets) {
-                bullet.Update();
-                bullet.draw(canvas);
+        }
+
+        public void drawBullets(Canvas canvas) {
+            for(int i=0; i<bullets.size(); i++) {
+                Bullet bullet = (Bullet)bullets.get(i);
+                if(bullet.withinCanvas(canvas)) {
+                    bullet.Update();
+                    score = bullet.detectCollisions(swarms, score);
+                    Log.d("GBB", "\nCollision method finished\n\n");
+                    bullet.draw(canvas);
+                } else {
+                    bullets.remove(i);
+                }
             }
         }
 
@@ -191,6 +202,7 @@ public class DevTest extends Activity
             // Draws common information on the very top of the canvas
             infoPaint.setColor(Color.RED);
             drawUIText(canvas, "SWARMS: "+swarms.size(), infoPaint, 10, 20);
+            drawUIText(canvas, "BULLETS: "+bullets.size(), infoPaint, 10, 30);
             infoPaint.setColor(Color.GREEN);
             drawUIText(canvas, "SCORE: "+score, infoPaint, 120, 20);
             infoPaint.setColor(Color.YELLOW);

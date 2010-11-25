@@ -13,7 +13,7 @@ import devtest.jaymz.eu.Enemy;
 
 class Swarm {
     private ArrayList<Enemy> sprites = new ArrayList<Enemy>();
-    private int cnt = 3; // number to make
+    private int cnt = 1; // number to make
     private Random _r = new Random();
     private boolean alive = true; // whether or not all our sprites are "dead"
 
@@ -29,10 +29,9 @@ class Swarm {
     public void draw(Canvas canvas) {
         for(int i=0; i<sprites.size(); i++) {
             Enemy sprite = (Enemy)sprites.get(i);
-            if (sprite.isAlive(canvas.getHeight())) {
+            if (sprite.withinCanvas(canvas)) {
                 sprite.Update();
                 canvas.drawBitmap(sprite.getGraphic(), sprite.getMatrix(), sprite.getPaint());
-
             } else {
                 sprites.remove(i);
             }
@@ -61,5 +60,9 @@ class Swarm {
             alive = false;
         }
         return alive;
+    }
+
+    public ArrayList<Enemy> getEnemies() {
+        return sprites;
     }
 }
