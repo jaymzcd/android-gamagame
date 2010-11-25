@@ -13,14 +13,14 @@ import devtest.jaymz.eu.Enemy;
 
 class Swarm {
     private ArrayList<Enemy> sprites = new ArrayList<Enemy>();
-    private int cnt = 1; // number to make
+    private int cnt = 5; // number to make
     private Random _r = new Random();
     private boolean alive = true; // whether or not all our sprites are "dead"
 
     public Swarm(Context context, float x, float y) {
         for(int i=0; i<cnt; i++) {
             Enemy sprite = new Enemy(BitmapFactory.decodeResource(context.getResources(), getRandomEnemy()), BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion));
-            sprite.getCoordinates().setX((int) x - sprite.getGraphic().getWidth() / 2 + _r.nextInt(10)-20);
+            sprite.getCoordinates().setX((int) x - sprite.getGraphic().getWidth() / 2 + _r.nextInt(400));
             sprite.getCoordinates().setY((int) y - sprite.getGraphic().getHeight() / 2 + _r.nextInt(10)-20);
             sprites.add(sprite);
         }

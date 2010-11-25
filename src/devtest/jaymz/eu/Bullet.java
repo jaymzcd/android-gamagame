@@ -11,28 +11,43 @@ import devtest.jaymz.eu.Enemy;
 import devtest.jaymz.eu.Swarm;
 
 class Bullet extends Sprite {
+    private boolean DEBUG = true;
+    private static int cnt = 0;
+    public int name = 0;
+
+    protected boolean spent = false; // whether this bullet has been "used"
 
     public Bullet() {
         super();
-        setVertSpeed(-25); // goes up
+        setVertSpeed(-20); // goes up
         setHorizSpeed(0); // no drift
-        setScale(0.2f);
+        setScale(0.3f);
+
+        Bullet.cnt+=1;
+        name = Bullet.cnt;
     }
 
-    public int detectCollisions(ArrayList<Swarm> swarms, int inputScore) {
+    public int[] detectCollisions(ArrayList<Swarm> swarms) {
+        int score = 0;
+        int kills = 0;
+        
         for(int s=0; s<swarms.size(); s++) {
             Swarm swarm = (Swarm)swarms.get(s);
             ArrayList<Enemy> enemies = swarm.getEnemies();
             for(int e=0; e<enemies.size(); e++) {
                 Enemy enemy = (Enemy)enemies.get(e);
-                if(enemy.coordinatesWithinBounds(this.getCoordinates())) {
+                if(enemy.isAlive()&&enemy.coordinatesWithinBounds(this.getCoordinates())&&!spent) {
                     enemy.explode();
-                    inputScore += 100;
-                    Log.d("BUL", "Removed enemy # "+e+" from swarm #"+s);
+                    spent = true;
+                    score = 100;
+                    kills = 1;
+                    if(DEBUG)
+                        Log.d("BUL", "TICKER: "+ticker+" Bullet #"+name+" Removed enemy #"+e+" from swarm #"+s+" Spent is "+spent);
                 }
             }
         }
-        return inputScore;
+        int data[] = {score, kills};
+        return data;
     }
 
 }
