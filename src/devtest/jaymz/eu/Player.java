@@ -18,7 +18,9 @@ import devtest.jaymz.eu.Bullet;
 
 class Player extends Sprite {
 
-    Bitmap bulletImage;
+    private Bitmap bulletImage;
+    private int lastFired = 0;
+    private int fireDelay = 2;
 
     public Player(Context context) {
         super();
@@ -30,14 +32,22 @@ class Player extends Sprite {
     }
 
     public Bullet fireBullet() {
-        Bullet bullet = new Bullet();
-        bullet.setGraphic(bulletImage);
-        bullet.getCoordinates().setX(this.getCoordinates().getX());
-        bullet.getCoordinates().setY(this.getCoordinates().getY());
-        return bullet;
+        if((ticker-lastFired)>fireDelay) {
+            Bullet bullet = new Bullet();
+            bullet.setGraphic(bulletImage);
+            bullet.getCoordinates().setX(this.getCoordinates().getX());
+            bullet.getCoordinates().setY(this.getCoordinates().getY());
+            lastFired = ticker;
+            return bullet;
+        }
+        return null;
     }
 
     public void draw(Canvas canvas) {
         super.draw(canvas);
+    }
+
+    public void Update() {
+        ticker++;
     }
 }

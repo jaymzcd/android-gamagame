@@ -172,13 +172,14 @@ public class DevTest extends Activity
         }
 
         public void drawPlayer(Canvas canvas) {
+            player.Update();
             player.draw(canvas);
         }
 
         public void updateBullets(Canvas canvas) {
             for(int i=0; i<bullets.size(); i++) {
                 Bullet bullet = (Bullet)bullets.get(i);
-                if(bullet.withinCanvas(canvas)) {
+                if(bullet.withinCanvas(canvas)&&!bullet.spent) {
                     bullet.Update();
                     int stats[] = bullet.detectCollisions(swarms);
                     if(bullet.spent) {
@@ -281,7 +282,9 @@ public class DevTest extends Activity
                 player.getCoordinates().setX((int)posX);
                 player.getCoordinates().setY((int)posY);
                 if (true || event.getAction() == MotionEvent.ACTION_DOWN) {
-                    bullets.add(player.fireBullet());
+                    Bullet bullet = player.fireBullet();
+                    if(bullet!=null)
+                        bullets.add(bullet);
                 }
                 return true;
             }
