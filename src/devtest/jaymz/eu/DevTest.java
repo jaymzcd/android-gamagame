@@ -71,6 +71,12 @@ public class DevTest extends Activity
                         _surfaceHolder.unlockCanvasAndPost(c);
                     }
                 }
+
+                try {
+                    this.sleep(1000/30); // refactor
+                } catch (InterruptedException ex) {
+
+                }
             }
 
         }
