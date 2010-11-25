@@ -30,14 +30,14 @@ class Sprite {
 
     protected int ticker = 0; // used to make changes as updates ticks by
 
-    private boolean DEBUG = true;
+    private boolean DEBUG = false;
 
     public Sprite() {
         coordinates  = new Coordinates();
         matrix = new Matrix();
         paint = new Paint();
         setDynamics();
-        setPaint();
+        setPaint(null);
         setScale(1);
     }
 
@@ -53,8 +53,8 @@ class Sprite {
         angularDirection = 0;
     }
 
-    public void setPaint() {
-        // Holder
+    public void setPaint(Paint inputPaint) {
+        paint = inputPaint;
     }
 
     public Bitmap getGraphic() {
@@ -167,6 +167,18 @@ class Sprite {
             return true;
         }
         return false;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void kill() {
+        alive = false;
+    }
+
+    public void setAlive() {
+        alive = true;
     }
 
     // Co-ordinate holding class

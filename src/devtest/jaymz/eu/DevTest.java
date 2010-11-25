@@ -190,7 +190,6 @@ public class DevTest extends Activity
                 if(bullet.withinCanvas(canvas)) {
                     bullet.Update();
                     score = bullet.detectCollisions(swarms, score);
-                    Log.d("GBB", "\nCollision method finished\n\n");
                     bullet.draw(canvas);
                 } else {
                     bullets.remove(i);

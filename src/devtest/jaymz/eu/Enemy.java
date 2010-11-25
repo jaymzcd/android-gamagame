@@ -15,8 +15,30 @@ import android.util.Log;
 import devtest.jaymz.eu.Sprite;
 
 class Enemy extends Sprite {
+
+    Bitmap explodeGraphic;
+    int explodeTicker;
+    boolean exploding = false;
+    
     public Enemy (Bitmap bitmap) {
         super(bitmap);
+    }
+
+    public Enemy(Bitmap bitmap, Bitmap exploder) {
+        super(bitmap);
+        explodeGraphic = exploder;
+
+       /* Create a randomish green hue to paint over the base white
+           of the sprite. Apply via the colorfilter and store for later */
+        Paint enemyPaint = new Paint();
+        float[] hsv = new float[3];
+        hsv[0] = 93 - _r.nextInt(20);
+        hsv[1] = 0xff;
+        hsv[2] = 0xff;
+        ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
+        enemyPaint.setColorFilter(f);
+        setPaint(enemyPaint);
+        setPaint(null);
     }
 
     public void setDynamics() {
@@ -29,19 +51,6 @@ class Enemy extends Sprite {
         vertSpeed += _r.nextInt(5);
     }
 
-    public void setPaint() {
-        /* Create a randomish green hue to paint over the base white
-           of the sprite. Apply via the colorfilter and store for later */
-
-        float[] hsv = new float[3];
-        hsv[0] = 93 - _r.nextInt(20);
-        hsv[1] = 0xff;
-        hsv[2] = 0xff;
-
-        ColorFilter f = new LightingColorFilter(Color.HSVToColor(hsv), 1);
-        paint.setColorFilter(f);
-    }
-
     public void Update() {
         super.Update();
         if (ticker % 50 == 0) {
@@ -51,6 +60,27 @@ class Enemy extends Sprite {
 
     public int getRandomDirection() {
         return (_r.nextInt(3) - 1);
+    }
+
+    public void explode() {
+        kill();
+        if(explodeGraphic!=null) {
+            setGraphic(explodeGraphic);
+            setPaint(null);
+            exploding = true;
+            explodeTicker = ticker;
+        }
+    }
+
+    public boolean isExploding() {
+        if(exploding) {
+            if((ticker-explodeTicker)<2) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
 }

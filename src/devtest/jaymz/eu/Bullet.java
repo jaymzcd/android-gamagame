@@ -26,7 +26,7 @@ class Bullet extends Sprite {
             for(int e=0; e<enemies.size(); e++) {
                 Enemy enemy = (Enemy)enemies.get(e);
                 if(enemy.coordinatesWithinBounds(this.getCoordinates())) {
-                    enemies.remove(e);
+                    enemy.explode();
                     inputScore += 100;
                     Log.d("BUL", "Removed enemy # "+e+" from swarm #"+s);
                 }

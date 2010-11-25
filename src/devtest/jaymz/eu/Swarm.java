@@ -19,7 +19,7 @@ class Swarm {
 
     public Swarm(Context context, float x, float y) {
         for(int i=0; i<cnt; i++) {
-            Enemy sprite = new Enemy(BitmapFactory.decodeResource(context.getResources(), getRandomEnemy()));
+            Enemy sprite = new Enemy(BitmapFactory.decodeResource(context.getResources(), getRandomEnemy()), BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion));
             sprite.getCoordinates().setX((int) x - sprite.getGraphic().getWidth() / 2 + _r.nextInt(10)-20);
             sprite.getCoordinates().setY((int) y - sprite.getGraphic().getHeight() / 2 + _r.nextInt(10)-20);
             sprites.add(sprite);
@@ -29,7 +29,7 @@ class Swarm {
     public void draw(Canvas canvas) {
         for(int i=0; i<sprites.size(); i++) {
             Enemy sprite = (Enemy)sprites.get(i);
-            if (sprite.withinCanvas(canvas)) {
+            if (sprite.withinCanvas(canvas)&&(sprite.isAlive()||sprite.isExploding())) {
                 sprite.Update();
                 canvas.drawBitmap(sprite.getGraphic(), sprite.getMatrix(), sprite.getPaint());
             } else {
