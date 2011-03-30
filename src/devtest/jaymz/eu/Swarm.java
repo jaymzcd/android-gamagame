@@ -13,28 +13,42 @@ import devtest.jaymz.eu.Enemy;
 
 class Swarm {
     private ArrayList<Enemy> sprites = new ArrayList<Enemy>();
-    private int cnt = 5; // number to make
+    private int cnt = 4; // number to make
     private Random _r = new Random();
     private boolean alive = true; // whether or not all our sprites are "dead"
+    private Bitmap spriteBitmap;
+    private Bitmap deathBitmap;
 
-    public Swarm(Context context, float x, float y) {
-        for(int i=0; i<cnt; i++) {
-            Enemy sprite = new Enemy(BitmapFactory.decodeResource(context.getResources(), getRandomEnemy()), BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion));
-            sprite.getCoordinates().setX((int) x - sprite.getGraphic().getWidth() / 2 + _r.nextInt(400));
-            sprite.getCoordinates().setY((int) y - sprite.getGraphic().getHeight() / 2 + _r.nextInt(10)-20);
-            sprites.add(sprite);
-        }
+    public Swarm(Context context, int x, int y) {
+        Log.d("SWM", "Generated *NEW* swarm!");
+        spriteBitmap = BitmapFactory.decodeResource(context.getResources(), getRandomEnemy());
+        deathBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.explosion);
+        generateSwarm(x, y);
     }
 
     public void draw(Canvas canvas) {
         for(int i=0; i<sprites.size(); i++) {
             Enemy sprite = (Enemy)sprites.get(i);
             if (sprite.withinCanvas(canvas)&&(sprite.isAlive()||sprite.isExploding())) {
-                sprite.Update();
                 canvas.drawBitmap(sprite.getGraphic(), sprite.getMatrix(), sprite.getPaint());
             } else {
                 sprites.remove(i);
             }
+        }
+    }
+
+    public void Update() {
+        for(Sprite sprite : sprites) {
+            sprite.Update();
+        }
+    }
+
+    public void generateSwarm(int x, int y) {
+        for(int i=0; i<cnt; i++) {
+            Enemy sprite = new Enemy(spriteBitmap, deathBitmap);
+            sprite.getCoordinates().setX((int) x - sprite.getGraphic().getWidth() / 2 + _r.nextInt(400));
+            sprite.getCoordinates().setY((int) y - sprite.getGraphic().getHeight() / 2 + _r.nextInt(10)-20);
+            sprites.add(sprite);
         }
     }
 

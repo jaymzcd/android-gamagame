@@ -3,7 +3,8 @@
       package="devtest.jaymz.eu"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:label="@string/app_name" android:icon="@drawable/icon">
+    <application android:label="@string/app_name" android:icon="@drawable/icon"
+        android:theme="@style/Theme.NoBackground">
         <activity android:name="DevTest"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait">

@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.os.Debug;
 
 import devtest.jaymz.eu.Sprite;
 import devtest.jaymz.eu.Player;
@@ -36,6 +37,11 @@ public class DevTest extends Activity
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(new Panel(this));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     class TutorialThread extends Thread {
@@ -60,11 +66,14 @@ public class DevTest extends Activity
                 try {
                     c = _surfaceHolder.lockCanvas(null);
                     synchronized (_surfaceHolder) {
+                        //Debug.startMethodTracing("gbb");
                         _panel.updateBullets(c);
+                        _panel.updateEnemies();
                         _panel.onDraw(c);
                         _panel.drawPlayer(c);
                         _panel.drawSwarms(c);
                         _panel.drawBullets(c);
+                        //Debug.stopMethodTracing();
                     }
                 } finally {
                     if (c != null) {
@@ -111,7 +120,7 @@ public class DevTest extends Activity
         private long startTime;
 
         private final int COUNTDOWN = 5;
-        private final int MAX_SWARMS = 3;
+        private final int MAX_SWARMS = 1;
 
         public Panel(Context context) {
             super(context);
@@ -195,6 +204,12 @@ public class DevTest extends Activity
                 } else {
                     bullets.remove(i);
                 }
+            }
+        }
+
+        public void updateEnemies() {
+            for(Swarm swarm : swarms) {
+                swarm.Update();
             }
         }
 
